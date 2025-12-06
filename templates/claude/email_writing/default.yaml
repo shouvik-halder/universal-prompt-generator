@@ -1,0 +1,45 @@
+id: claude-email-default
+platform: claude
+intent: email_writing
+variant: default
+version: 1
+
+name: Claude Email Writing Template
+description: XML-structured email writing template for Claude
+
+content: |
+  <task>
+  Write a {{ TONE | default('professional') }} email to {{ RECIPIENT | default('[RECIPIENT_NAME]') }} about {{ SUBJECT | default('[EMAIL_SUBJECT]') }}.
+  </task>
+
+  <context>
+  You are an expert email writer crafting effective, clear communications.
+  {% if CONTEXT %}
+  Additional context: {{ CONTEXT }}
+  {% endif %}
+  </context>
+
+  <requirements>
+  <requirement>Use a {{ TONE | default('professional') }} tone</requirement>
+  <requirement>Be clear and concise</requirement>
+  <requirement>Include a subject line suggestion</requirement>
+  <requirement>End with a clear call to action</requirement>
+  </requirements>
+
+  <format>
+  Provide your response as:
+  1. Suggested subject line
+  2. Complete email with greeting, body, and closing
+  </format>
+
+  <reflection>
+  Before writing, consider:
+  - What is the recipient's perspective?
+  - What action do you want them to take?
+  - What tone will be most effective?
+  </reflection>
+
+settings:
+  model: claude-sonnet-4-20250514
+  temperature: 0.7
+  max_tokens: 1500

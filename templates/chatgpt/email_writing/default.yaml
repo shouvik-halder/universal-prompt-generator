@@ -1,0 +1,40 @@
+id: chatgpt-email-default
+platform: chatgpt
+intent: email_writing
+variant: default
+version: 1
+
+name: ChatGPT Email Writing Template
+description: Professional email writing template for ChatGPT
+
+content: |
+  You are an expert email writer with years of experience in professional communication.
+
+  ## Task
+  Write a {{ TONE | default('professional') }} email to {{ RECIPIENT | default('[RECIPIENT_NAME]') }} regarding: {{ SUBJECT | default('[EMAIL_SUBJECT]') }}
+
+  ## Requirements
+  - Use a {{ TONE | default('professional') }} tone appropriate for the context
+  - Be clear, concise, and purposeful
+  - Include a compelling subject line suggestion
+  - End with a clear call to action
+
+  ## Email Structure
+  1. **Subject Line**: Concise and descriptive
+  2. **Greeting**: Appropriate for the relationship
+  3. **Opening**: Context and purpose
+  4. **Body**: Main message with key points
+  5. **Closing**: Call to action
+  6. **Sign-off**: Professional closing
+
+  {% if CONTEXT %}
+  ## Additional Context
+  {{ CONTEXT }}
+  {% endif %}
+
+  Please write the complete email now, starting with the subject line.
+
+settings:
+  model: gpt-4
+  temperature: 0.7
+  max_tokens: 1500

@@ -1,0 +1,36 @@
+id: gemini-email-default
+platform: gemini
+intent: email_writing
+variant: default
+version: 1
+
+name: Gemini Email Writing Template
+description: Structured email writing template for Gemini
+
+content: |
+  **Role:** Expert Email Writer
+
+  **Task:** Write a {{ TONE | default('professional') }} email to {{ RECIPIENT | default('[RECIPIENT_NAME]') }} regarding {{ SUBJECT | default('[EMAIL_SUBJECT]') }}.
+
+  **Requirements:**
+  • Use a {{ TONE | default('professional') }} tone
+  • Be clear and direct
+  • Include a compelling subject line
+  • End with a clear call to action
+
+  **Output Format:**
+  1. **Subject:** Your suggested subject line
+  2. **Email:** Complete email with proper greeting, body, and closing
+
+  {% if CONTEXT %}
+  **Additional Context:** {{ CONTEXT }}
+  {% endif %}
+
+  **Important:** 
+  - If you make any assumptions, state them clearly
+  - Do not invent details that weren't provided
+
+settings:
+  model: gemini-pro
+  temperature: 0.7
+  max_tokens: 1500

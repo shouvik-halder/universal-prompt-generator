@@ -1,0 +1,35 @@
+id: chatgpt-code-default
+platform: chatgpt
+intent: code_generation
+variant: default
+version: 1
+
+name: ChatGPT Code Generation Template
+description: Clean code generation template for ChatGPT
+
+content: |
+  You are an expert {{ LANGUAGE | default('[PROGRAMMING_LANGUAGE]') }} developer with deep knowledge of best practices, design patterns, and clean code principles.
+
+  ## Task
+  {{ TASK_DESCRIPTION | default('[Describe what the code should accomplish]') }}
+
+  ## Technical Requirements
+  - **Language**: {{ LANGUAGE | default('[PROGRAMMING_LANGUAGE]') }}
+  {% if FRAMEWORK %}- **Framework**: {{ FRAMEWORK }}{% endif %}
+  - Write clean, readable, well-documented code
+  - Include proper error handling
+  - Follow {{ LANGUAGE | default('language') }} best practices and conventions
+
+  ## Expected Output
+  Please provide:
+  1. **Approach**: Brief explanation of your solution strategy
+  2. **Code**: Complete, working implementation with comments
+  3. **Usage Example**: How to use the code
+  4. **Notes**: Any important considerations or limitations
+
+  Think through the problem step by step before writing code.
+
+settings:
+  model: gpt-4
+  temperature: 0.3
+  max_tokens: 2500

@@ -1,0 +1,16 @@
+id: midjourney-image-default
+platform: midjourney
+intent: image_generation
+variant: default
+version: 1
+
+name: Midjourney Image Generation Template
+description: Optimized image prompt template for Midjourney
+
+content: |
+  {{ SUBJECT | default('[MAIN SUBJECT]') }}{% if STYLE %}, {{ STYLE }} style{% endif %}{% if MOOD %}, {{ MOOD }} atmosphere{% endif %}{% if LIGHTING %}, {{ LIGHTING }} lighting{% endif %}{% if COMPOSITION %}, {{ COMPOSITION }}{% endif %}, high quality, highly detailed, professional --ar {{ ASPECT_RATIO | default('16:9') }} --v {{ VERSION | default('6.0') }}{% if STYLIZE %} --stylize {{ STYLIZE }}{% endif %}
+
+settings:
+  version: "6.0"
+  default_ar: "16:9"
+  stylize: 100

@@ -1,0 +1,196 @@
+# version: '3.8'
+
+# services:
+#   # ============================================
+#   # Database
+#   # ============================================
+#   postgres:
+#     image: postgres:15-alpine
+#     container_name: upg-postgres
+#     environment:
+#       POSTGRES_DB: upg
+#       POSTGRES_USER: upg
+#       POSTGRES_PASSWORD: upg
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U upg"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   # ============================================
+#   # Analysis Service (Python)
+#   # ============================================
+#   analysis-service:
+#     build:
+#       context: ./services/analysis-service
+#       dockerfile: Dockerfile
+#     container_name: upg-analysis
+#     environment:
+#       - SERVICE_NAME=analysis-service
+#       - PORT=8001
+#     ports:
+#       - "8001:8001"
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 3
+#       start_period: 10s
+
+#   # ============================================
+#   # Generation Service (Python)
+#   # ============================================
+#   generation-service:
+#     build:
+#       context: ./services/generation-service
+#       dockerfile: Dockerfile
+#     container_name: upg-generation
+#     environment:
+#       - SERVICE_NAME=generation-service
+#       - PORT=8002
+#       - DATABASE_URL=postgresql+asyncpg://upg:upg@postgres:5432/upg
+#     ports:
+#       - "8002:8002"
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 3
+#       start_period: 10s
+
+#   # ============================================
+#   # Core Service (Node.js) - Public API
+#   # ============================================
+#   core-service:
+#     build:
+#       context: ./services/core-service
+#       dockerfile: Dockerfile
+#     container_name: upg-core
+#     environment:
+#       - SERVICE_NAME=core-service
+#       - PORT=8000
+#       - ANALYSIS_SERVICE_URL=http://analysis-service:8001
+#       - GENERATION_SERVICE_URL=http://generation-service:8002
+#     ports:
+#       - "8000:8000"
+#     depends_on:
+#       analysis-service:
+#         condition: service_healthy
+#       generation-service:
+#         condition: service_healthy
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 3
+#       start_period: 10s
+
+# volumes:
+#   postgres_data:
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Database
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: upg-postgres
+    environment:
+      POSTGRES_DB: upg
+      POSTGRES_USER: upg
+      POSTGRES_PASSWORD: upg
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U upg"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Analysis Service (Python)
+  # ============================================
+  analysis-service:
+    build:
+      context: ./services/analysis-service
+      dockerfile: Dockerfile
+    container_name: upg-analysis
+    environment:
+      - SERVICE_NAME=analysis-service
+      - PORT=8001
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ============================================
+  # Generation Service (Python)
+  # ============================================
+  generation-service:
+    build:
+      context: ./services/generation-service
+      dockerfile: Dockerfile
+    container_name: upg-generation
+    environment:
+      - SERVICE_NAME=generation-service
+      - PORT=8002
+      - DATABASE_URL=postgresql+asyncpg://upg:upg@postgres:5432/upg
+      - TEMPLATES_DIR=/app/templates
+    volumes:
+      - ./templates:/app/templates:ro
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # ============================================
+  # Core Service (Node.js) - Public API
+  # ============================================
+  core-service:
+    build:
+      context: ./services/core-service
+      dockerfile: Dockerfile
+    container_name: upg-core
+    environment:
+      - SERVICE_NAME=core-service
+      - PORT=8000
+      - ANALYSIS_SERVICE_URL=http://analysis-service:8001
+      - GENERATION_SERVICE_URL=http://generation-service:8002
+    ports:
+      - "8000:8000"
+    depends_on:
+      analysis-service:
+        condition: service_healthy
+      generation-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  postgres_data:

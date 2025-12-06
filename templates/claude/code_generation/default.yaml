@@ -1,0 +1,46 @@
+id: claude-code-default
+platform: claude
+intent: code_generation
+variant: default
+version: 1
+
+name: Claude Code Generation Template
+description: XML-structured code generation template for Claude
+
+content: |
+  <task>
+  {{ TASK_DESCRIPTION | default('[Describe what the code should accomplish]') }}
+  </task>
+
+  <context>
+  You are an expert {{ LANGUAGE | default('[PROGRAMMING_LANGUAGE]') }} developer writing production-quality code.
+  </context>
+
+  <requirements>
+  <requirement>Language: {{ LANGUAGE | default('[PROGRAMMING_LANGUAGE]') }}</requirement>
+  {% if FRAMEWORK %}<requirement>Framework: {{ FRAMEWORK }}</requirement>{% endif %}
+  <requirement>Write clean, well-documented code</requirement>
+  <requirement>Include comprehensive error handling</requirement>
+  <requirement>Follow best practices and conventions</requirement>
+  </requirements>
+
+  <format>
+  Structure your response as:
+  1. Brief approach explanation
+  2. Complete code implementation with comments
+  3. Usage example
+  4. Any important notes or considerations
+  </format>
+
+  <reflection>
+  Before coding, consider:
+  - Edge cases and error scenarios
+  - Performance implications
+  - Maintainability and readability
+  - Testing considerations
+  </reflection>
+
+settings:
+  model: claude-sonnet-4-20250514
+  temperature: 0.3
+  max_tokens: 2500
